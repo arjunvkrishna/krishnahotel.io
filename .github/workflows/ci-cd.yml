@@ -1,7 +1,0 @@
-jobs:
-  your-job-name:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      # Add your additional steps here
