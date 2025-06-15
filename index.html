@@ -19,6 +19,7 @@
             font-family: 'Mukta', sans-serif;
             background-color: #fdfcf9; /* A very light, warm off-white */
             overflow-x: hidden; /* Prevents horizontal scroll caused by off-screen elements */
+            perspective: 1000px; /* Adds perspective for 3D transforms */
         }
         h1, h2, h3, .font-serif {
             font-family: 'Noto Serif', serif;
@@ -34,8 +35,23 @@
             z-index: 0; /* Behind all content */
             pointer-events: none; /* Allows clicking through the canvas */
         }
+        
+        /* Cursor Glow Effect */
+        #cursor-glow {
+            position: fixed;
+            z-index: 1;
+            top: var(--y, 0);
+            left: var(--x, 0);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.15), transparent 60%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: top 0.1s ease-out, left 0.1s ease-out;
+        }
 
-        /* Styling for the randomly placed decorative rotis */
+        /* Styling for the randomly placed decorative food items */
         .random-porotta {
             position: fixed;
             height: auto;
@@ -46,14 +62,35 @@
             border-radius: 50%; /* Make the image circular */
             object-fit: cover; /* Ensure the image covers the circular area */
         }
+        
+        /* Hover effect for individual brand name letters */
+        .brand-logo {
+            display: inline-block; 
+            cursor: pointer;
+        }
+        
+        .brand-logo .letter {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), text-shadow 0.3s ease-in-out;
+        }
+
+        /* **CHANGE**: Animation now triggers on individual letter hover, not the whole logo */
+        .brand-logo .letter:hover {
+            transform: translateY(-5px) scale(1.1);
+            text-shadow: 0px 4px 10px rgba(146, 102, 49, 0.4);
+        }
+        
     </style>
 </head>
 <body class="text-gray-800">
+    
+    <!-- Cursor Glow Div -->
+    <div id="cursor-glow"></div>
 
     <!-- Water Ripple Effect Canvas -->
     <canvas id="ripple-canvas"></canvas>
 
-    <!-- Container for randomly placed porottas. They will be added here by JavaScript. -->
+    <!-- Container for randomly placed food images. -->
     <div id="porotta-container"></div>
 
     <!-- Main content container -->
@@ -62,7 +99,10 @@
         <!-- Header & Navigation -->
         <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="#home" class="text-2xl font-bold font-serif text-amber-800">KRISHNA</a>
+                <!-- Each letter is wrapped in a span for individual animation -->
+                <a href="#home" class="brand-logo text-2xl font-bold font-serif text-amber-800">
+                    <span class="letter">K</span><span class="letter">R</span><span class="letter">I</span><span class="letter">S</span><span class="letter">H</span><span class="letter">N</span><span class="letter">A</span>
+                </a>
                 <nav class="hidden md:flex space-x-8">
                     <a href="#home" class="text-gray-700 hover:text-amber-800 transition">Home</a>
                     <a href="#menu" class="text-gray-700 hover:text-amber-800 transition">Menu</a>
@@ -214,36 +254,30 @@
                 const foodNames = ['Porotta', 'Appam', 'Dosha']; // Array of food names to display
 
                 for (let i = 0; i < porottaCount; i++) {
-                    // **CHANGE**: Cycle through the food names array
                     const foodName = foodNames[i % foodNames.length]; 
                     const porottaImageUrl = `https://placehold.co/200x200/f5deb3/8B4513?text=${foodName}`;
 
                     const porottaImg = document.createElement('img');
                     
                     porottaImg.src = porottaImageUrl; 
-                    porottaImg.alt = `Decorative ${foodName}`; // Update alt text dynamically
+                    porottaImg.alt = `Decorative ${foodName}`;
                     porottaImg.className = 'random-porotta';
                     porottaImg.onerror = () => { 
                         porottaImg.src = `https://placehold.co/200x200/f5deb3/8B4513?text=Food`; 
                         porottaImg.alt = 'Decorative Food Placeholder';
                     };
 
-                    // Random size
-                    const size = Math.random() * 150 + 100; // between 100px and 250px
+                    const size = Math.random() * 150 + 100;
                     porottaImg.style.width = `${size}px`;
                     porottaImg.style.height = `${size}px`;
-
-                    // Random position (top)
                     porottaImg.style.top = `${Math.random() * 100}vh`;
 
-                    // **NEW**: Store rotation and parallax strength in data attributes for animation
                     const rotation = Math.random() * 360;
-                    const strength = Math.random() * 10 + 5; // Parallax strength from 5 to 15
+                    const strength = Math.random() * 15 + 10; // Parallax strength from 10 to 25
                     porottaImg.dataset.rotation = rotation;
                     porottaImg.dataset.strength = strength;
                     porottaImg.style.transform = `rotate(${rotation}deg)`;
 
-                    // Alternate between left and right sides, placing them partially off-screen
                     if (i % 2 === 0) { // Left side
                         porottaImg.style.left = `-${size * (0.5 + Math.random() * 0.3)}px`;
                     } else { // Right side
@@ -255,10 +289,16 @@
             }
             placeRandomPorottas();
 
-            // **NEW**: Parallax mouse-move effect on rotis
+            // --- Mouse Move Effects (Cursor Glow & 3D Parallax) ---
+            const glow = document.getElementById('cursor-glow');
             document.addEventListener('mousemove', (e) => {
                 const { clientX, clientY } = e;
-                // Calculate mouse position from -1 to 1, relative to the center of the screen
+                
+                // Update cursor glow position using CSS variables
+                glow.style.setProperty('--x', `${clientX}px`);
+                glow.style.setProperty('--y', `${clientY}px`);
+
+                // Calculate mouse position from -1 to 1 for parallax effect
                 const x = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
                 const y = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
 
@@ -267,11 +307,14 @@
                     const strength = parseFloat(porotta.dataset.strength || 10);
                     const rotation = parseFloat(porotta.dataset.rotation || 0);
                     
-                    // Move the element in the opposite direction of the mouse
                     const moveX = -x * strength;
                     const moveY = -y * strength;
 
-                    porotta.style.transform = `translateX(${moveX}px) translateY(${moveY}px) rotate(${rotation}deg)`;
+                    // Add 3D rotation for the tilt effect
+                    const tiltX = -y * (strength / 2.5);
+                    const tiltY = x * (strength / 2.5);
+
+                    porotta.style.transform = `translateX(${moveX}px) translateY(${moveY}px) rotateZ(${rotation}deg) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
                 }
             });
 
@@ -307,7 +350,6 @@
                         });
                     }
 
-                    // Hide mobile menu after clicking a link
                     if (!mobileMenu.classList.contains('hidden')) {
                          mobileMenu.classList.add('hidden');
                     }
@@ -327,10 +369,9 @@
             resizeCanvas();
             window.addEventListener('resize', () => {
                 resizeCanvas();
-                placeRandomPorottas(); // Re-place images on resize for better fit
+                placeRandomPorottas();
             });
 
-            // Create a new ripple on click
             function addRipple(e) {
                 ripples.push({
                     x: e.clientX,
@@ -342,7 +383,6 @@
             }
             document.addEventListener('click', addRipple);
 
-
             // Animation loop for ripples
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -350,8 +390,8 @@
                 for (let i = ripples.length - 1; i >= 0; i--) {
                     let r = ripples[i];
 
-                    r.radius += 1.5; // Ripple speed
-                    r.alpha -= 0.02; // Fade speed
+                    r.radius += 1.5;
+                    r.alpha -= 0.02;
 
                     if (r.alpha <= 0) {
                         ripples.splice(i, 1);
@@ -360,7 +400,6 @@
 
                     ctx.beginPath();
                     ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                    // Use a color that fits the theme
                     ctx.strokeStyle = `rgba(146, 102, 49, ${r.alpha})`; 
                     ctx.lineWidth = 2;
                     ctx.stroke();
