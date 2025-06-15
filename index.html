@@ -74,10 +74,64 @@
             transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), text-shadow 0.3s ease-in-out;
         }
 
-        /* **CHANGE**: Animation now triggers on individual letter hover, not the whole logo */
         .brand-logo .letter:hover {
             transform: translateY(-5px) scale(1.1);
             text-shadow: 0px 4px 10px rgba(146, 102, 49, 0.4);
+        }
+        
+        /* Reveal-on-scroll animation styles */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* **NEW**: Animated Gradient Border for the main button */
+        .animated-gradient-button {
+            padding: 3px; /* This padding creates the border thickness */
+            border-radius: 0.6rem; /* Should be slightly larger than the button's border-radius */
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .animated-gradient-button:hover {
+            transform: scale(1.05); /* Enlarge the whole button on hover */
+        }
+
+        .animated-gradient-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%; /* Make the gradient larger than the container */
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                #fcd34d, /* Amber 300 */
+                #fb923c, /* Orange 400 */
+                #d97706, /* Amber 500 */
+                #92400e, /* Amber 800 */
+                #d97706,
+                #fb923c,
+                #fcd34d
+            );
+            transform: translate(-50%, -50%);
+            animation: rotate-gradient 4s linear infinite;
+        }
+
+        @keyframes rotate-gradient {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
         
     </style>
@@ -125,7 +179,11 @@
             <div class="max-w-3xl">
                 <h1 class="text-5xl md:text-7xl font-bold font-serif text-amber-900 leading-tight">Authentic Kerala Cuisine</h1>
                 <p class="mt-4 text-lg md:text-xl text-gray-600">Experience the rich and diverse flavors of Kerala, prepared with love and tradition. Welcome to KRISHNA.</p>
-                <a href="#menu" class="mt-8 inline-block bg-amber-800 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-amber-900 transition-transform transform hover:scale-105">Explore Our Menu</a>
+                
+                <!-- **CHANGE**: Wrapped button in a div for the animated border effect -->
+                <div class="mt-8 inline-block animated-gradient-button">
+                     <a href="#menu" class="relative z-10 inline-block bg-amber-800 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-amber-900 transition-colors">Explore Our Menu</a>
+                </div>
             </div>
         </section>
 
@@ -143,8 +201,8 @@
                 </div>
 
                 <div class="max-w-4xl mx-auto">
-                    <!-- Main Dishes -->
-                    <div id="main-dishes" class="mb-16 scroll-mt-24">
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
+                    <div id="main-dishes" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Main Dishes</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
                             <span>Porotta</span><span>Meals</span>
@@ -155,8 +213,8 @@
                         </div>
                     </div>
 
-                    <!-- Curries -->
-                    <div id="curries" class="mb-16 scroll-mt-24">
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
+                    <div id="curries" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Curries</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
                            <span>Beef Curry / Fry</span><span>Kadala Curry</span>
@@ -165,8 +223,8 @@
                         </div>
                     </div>
 
-                    <!-- Snacks -->
-                    <div id="snacks" class="mb-16 scroll-mt-24">
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
+                    <div id="snacks" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Snacks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
                            <span>Uzhunnuvada</span><span>Ullivada</span>
@@ -175,8 +233,8 @@
                         </div>
                     </div>
 
-                    <!-- Drinks -->
-                    <div id="drinks" class="scroll-mt-24">
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
+                    <div id="drinks" class="scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Drinks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
                            <span>Black Coffee</span><span>Black Tea</span>
@@ -408,6 +466,28 @@
                 requestAnimationFrame(animate);
             }
             animate();
+            
+            // **NEW**: Reveal on Scroll Animation using Intersection Observer
+            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+            const observerOptions = {
+                root: null, // relative to the viewport
+                rootMargin: '0px',
+                threshold: 0.1 // trigger when 10% of the element is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Stop observing once it's visible
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
         });
     </script>
 </body>
