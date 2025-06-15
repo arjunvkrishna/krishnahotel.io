@@ -8,22 +8,23 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Noto Serif -->
+    <!-- Google Fonts: Noto Serif & Mukta -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Mukta:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Custom styles */
+        /* Custom base styles */
         body {
             font-family: 'Mukta', sans-serif;
             background-color: #fdfcf9; /* A very light, warm off-white */
+            overflow-x: hidden; /* Prevents horizontal scroll caused by off-screen elements */
         }
         h1, h2, h3, .font-serif {
             font-family: 'Noto Serif', serif;
         }
 
-        /* Ripple Canvas */
+        /* Ripple Canvas for click effects */
         #ripple-canvas {
             position: fixed;
             top: 0;
@@ -34,15 +35,15 @@
             pointer-events: none; /* Allows clicking through the canvas */
         }
 
-        /* Styling for the randomly placed porottas */
+        /* Styling for the randomly placed decorative rotis */
         .random-porotta {
             position: fixed;
             height: auto;
             z-index: 1; /* Above canvas, below main content */
             opacity: 0.15;
             pointer-events: none;
-            transition: all 0.5s ease-in-out;
-            border-radius: 50%; /* Make the image circular to better fit the roti shape */
+            transition: transform 0.2s ease-out; /* Smooth transition for parallax effect */
+            border-radius: 50%; /* Make the image circular */
             object-fit: cover; /* Ensure the image covers the circular area */
         }
     </style>
@@ -68,8 +69,8 @@
                     <a href="#contact" class="text-gray-700 hover:text-amber-800 transition">Contact</a>
                 </nav>
                  <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                 </button>
             </div>
              <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-white/80 backdrop-blur-sm">
@@ -185,7 +186,7 @@
                 const dateElement = document.getElementById('date-display');
                 const statusElement = document.getElementById('status-display');
                 const today = new Date();
-                const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+                const dayOfWeek = today.getDay(); // 0 = Sunday, ..., 6 = Saturday
 
                 // Display the date
                 const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -205,34 +206,42 @@
             showDateAndStatus();
 
 
-            // --- Randomly Place Porotta Images ---
+            // --- Randomly Place and Animate Food Images ---
             function placeRandomPorottas() {
                 const container = document.getElementById('porotta-container');
-                container.innerHTML = ''; // Clear existing porottas if any
-                const porottaCount = 8; // Total number of porottas to display
-                const porottaImageUrl = 'https://placehold.co/200x200/f5deb3/8B4513?text=Roti'; // Placeholder if image fails
+                container.innerHTML = ''; // Clear existing images if any
+                const porottaCount = 8; // Total number of images
+                const foodNames = ['Porotta', 'Appam', 'Dosha']; // Array of food names to display
 
                 for (let i = 0; i < porottaCount; i++) {
+                    // **CHANGE**: Cycle through the food names array
+                    const foodName = foodNames[i % foodNames.length]; 
+                    const porottaImageUrl = `https://placehold.co/200x200/f5deb3/8B4513?text=${foodName}`;
+
                     const porottaImg = document.createElement('img');
-                    // Set a real image URL, with a placeholder as a fallback
-                    porottaImg.src = 'delicious-roti-assortment-table-with-copy-space.jpg';
-                    porottaImg.alt = 'Roti Decoration';
+                    
+                    porottaImg.src = porottaImageUrl; 
+                    porottaImg.alt = `Decorative ${foodName}`; // Update alt text dynamically
                     porottaImg.className = 'random-porotta';
                     porottaImg.onerror = () => { 
-                        porottaImg.src = porottaImageUrl; 
-                        porottaImg.alt = 'Decorative Roti Placeholder';
+                        porottaImg.src = `https://placehold.co/200x200/f5deb3/8B4513?text=Food`; 
+                        porottaImg.alt = 'Decorative Food Placeholder';
                     };
 
                     // Random size
                     const size = Math.random() * 150 + 100; // between 100px and 250px
                     porottaImg.style.width = `${size}px`;
-                    porottaImg.style.height = `${size}px`; // Make height equal to width for circle
+                    porottaImg.style.height = `${size}px`;
 
                     // Random position (top)
                     porottaImg.style.top = `${Math.random() * 100}vh`;
 
-                    // Random rotation
-                    porottaImg.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    // **NEW**: Store rotation and parallax strength in data attributes for animation
+                    const rotation = Math.random() * 360;
+                    const strength = Math.random() * 10 + 5; // Parallax strength from 5 to 15
+                    porottaImg.dataset.rotation = rotation;
+                    porottaImg.dataset.strength = strength;
+                    porottaImg.style.transform = `rotate(${rotation}deg)`;
 
                     // Alternate between left and right sides, placing them partially off-screen
                     if (i % 2 === 0) { // Left side
@@ -244,7 +253,27 @@
                     container.appendChild(porottaImg);
                 }
             }
-            placeRandomPorottas(); // Call the function on page load
+            placeRandomPorottas();
+
+            // **NEW**: Parallax mouse-move effect on rotis
+            document.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                // Calculate mouse position from -1 to 1, relative to the center of the screen
+                const x = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+                const y = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+
+                const porottas = document.getElementsByClassName('random-porotta');
+                for (const porotta of porottas) {
+                    const strength = parseFloat(porotta.dataset.strength || 10);
+                    const rotation = parseFloat(porotta.dataset.rotation || 0);
+                    
+                    // Move the element in the opposite direction of the mouse
+                    const moveX = -x * strength;
+                    const moveY = -y * strength;
+
+                    porotta.style.transform = `translateX(${moveX}px) translateY(${moveY}px) rotate(${rotation}deg)`;
+                }
+            });
 
 
             // --- Sticky Navbar with Animation ---
@@ -264,7 +293,7 @@
                 mobileMenu.classList.toggle('hidden');
             });
             
-            // --- Smooth Scrolling for all links ---
+            // --- Smooth Scrolling for all anchor links ---
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -278,7 +307,7 @@
                         });
                     }
 
-                    // Hide mobile menu after click
+                    // Hide mobile menu after clicking a link
                     if (!mobileMenu.classList.contains('hidden')) {
                          mobileMenu.classList.add('hidden');
                     }
@@ -298,25 +327,23 @@
             resizeCanvas();
             window.addEventListener('resize', () => {
                 resizeCanvas();
-                placeRandomPorottas(); // Optional: re-place porottas on resize for better fit
+                placeRandomPorottas(); // Re-place images on resize for better fit
             });
 
-            // Create a new ripple
+            // Create a new ripple on click
             function addRipple(e) {
-                // Use clientX/Y for viewport-relative coordinates
                 ripples.push({
                     x: e.clientX,
                     y: e.clientY,
                     radius: 0,
                     alpha: 1,
-                    maxWidth: 150, // Max radius of ripple
+                    maxWidth: 150,
                 });
             }
-            // Add listener to the whole document
             document.addEventListener('click', addRipple);
 
 
-            // Animation loop
+            // Animation loop for ripples
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
