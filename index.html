@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRISHNA Restaurant - Thodupuzha</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Noto Serif & Mukta -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Mukta:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
     <style>
         /* Custom base styles */
@@ -30,8 +31,9 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            /* **FIX**: The following two lines were removed to prevent distortion */
+            /* width: 100%; */
+            /* height: 100%; */
             z-index: 0; /* Behind all content */
             pointer-events: none; /* Allows clicking through the canvas */
         }
@@ -55,17 +57,16 @@
         .random-porotta {
             position: fixed;
             height: auto;
-            z-index: 1; /* Above canvas, below main content */
+            z-index: 20; 
             opacity: 0.15;
             pointer-events: none;
-            transition: transform 0.2s ease-out; /* Smooth transition for parallax effect */
             border-radius: 50%; /* Make the image circular */
             object-fit: cover; /* Ensure the image covers the circular area */
         }
         
         /* Hover effect for individual brand name letters */
         .brand-logo {
-            display: inline-block; 
+            display: inline-block;  
             cursor: pointer;
         }
         
@@ -91,7 +92,7 @@
             transform: translateY(0);
         }
 
-        /* **NEW**: Animated Gradient Border for the main button */
+        /* Animated Gradient Border for the main button */
         .animated-gradient-button {
             padding: 3px; /* This padding creates the border thickness */
             border-radius: 0.6rem; /* Should be slightly larger than the button's border-radius */
@@ -138,22 +139,16 @@
 </head>
 <body class="text-gray-800">
     
-    <!-- Cursor Glow Div -->
     <div id="cursor-glow"></div>
 
-    <!-- Water Ripple Effect Canvas -->
     <canvas id="ripple-canvas"></canvas>
 
-    <!-- Container for randomly placed food images. -->
     <div id="porotta-container"></div>
 
-    <!-- Main content container -->
     <div class="relative z-10">
 
-        <!-- Header & Navigation -->
         <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <!-- Each letter is wrapped in a span for individual animation -->
                 <a href="#home" class="brand-logo text-2xl font-bold font-serif text-amber-800">
                     <span class="letter">K</span><span class="letter">R</span><span class="letter">I</span><span class="letter">S</span><span class="letter">H</span><span class="letter">N</span><span class="letter">A</span>
                 </a>
@@ -166,33 +161,28 @@
                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                  </button>
             </div>
-             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden bg-white/80 backdrop-blur-sm">
-                <a href="#home" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Home</a>
-                <a href="#menu" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Menu</a>
-                <a href="#contact" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Contact</a>
-            </div>
+              <div id="mobile-menu" class="hidden md:hidden bg-white/80 backdrop-blur-sm">
+                 <a href="#home" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Home</a>
+                 <a href="#menu" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Menu</a>
+                 <a href="#contact" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Contact</a>
+             </div>
         </header>
 
-        <!-- Home Section -->
         <section id="home" class="min-h-screen flex items-center justify-center text-center px-4">
             <div class="max-w-3xl">
                 <h1 class="text-5xl md:text-7xl font-bold font-serif text-amber-900 leading-tight">Authentic Kerala Cuisine</h1>
                 <p class="mt-4 text-lg md:text-xl text-gray-600">Experience the rich and diverse flavors of Kerala, prepared with love and tradition. Welcome to KRISHNA.</p>
                 
-                <!-- **CHANGE**: Wrapped button in a div for the animated border effect -->
                 <div class="mt-8 inline-block animated-gradient-button">
                      <a href="#menu" class="relative z-10 inline-block bg-amber-800 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-amber-900 transition-colors">Explore Our Menu</a>
                 </div>
             </div>
         </section>
 
-        <!-- Menu Section -->
         <section id="menu" class="py-20 bg-white/50 backdrop-blur-md">
             <div class="container mx-auto px-6">
                 <h2 class="text-4xl font-bold font-serif text-center mb-12 text-amber-900">Our Menu</h2>
                 
-                <!-- Menu Navigation -->
                 <div class="flex justify-center flex-wrap gap-4 mb-12">
                     <a href="#main-dishes" class="menu-nav-link bg-amber-100 text-amber-800 py-2 px-5 rounded-full hover:bg-amber-200 transition">Main Dishes</a>
                     <a href="#curries" class="menu-nav-link bg-amber-100 text-amber-800 py-2 px-5 rounded-full hover:bg-amber-200 transition">Curries</a>
@@ -201,7 +191,6 @@
                 </div>
 
                 <div class="max-w-4xl mx-auto">
-                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="main-dishes" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Main Dishes</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
@@ -213,45 +202,40 @@
                         </div>
                     </div>
 
-                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="curries" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Curries</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
                            <span>Beef Curry / Fry</span><span>Kadala Curry</span>
-                           <span>Egg Curry</span><span>Vegetable Curry</span>
-                           <span>Fish Curry</span><span>Fish Fry</span>
+                            <span>Egg Curry</span><span>Vegetable Curry</span>
+                            <span>Fish Curry</span><span>Fish Fry</span>
                         </div>
                     </div>
 
-                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="snacks" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Snacks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
-                           <span>Uzhunnuvada</span><span>Ullivada</span>
-                           <span>Parippuvada</span><span>Pathiri</span>
-                           <span>Boli</span><span>Bonda</span>
+                            <span>Uzhunnuvada</span><span>Ullivada</span>
+                            <span>Parippuvada</span><span>Pathiri</span>
+                            <span>Boli</span><span>Bonda</span>
                         </div>
                     </div>
 
-                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="drinks" class="scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Drinks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
-                           <span>Black Coffee</span><span>Black Tea</span>
-                           <span>Tea</span><span>Coffee</span>
+                            <span>Black Coffee</span><span>Black Tea</span>
+                            <span>Tea</span><span>Coffee</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact Section -->
         <section id="contact" class="py-20">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-4xl font-bold font-serif text-center mb-8 text-amber-900">Get In Touch</h2>
                 <p class="text-xl text-gray-700 mb-4">We would love to welcome you!</p>
                 
-                <!-- Date & Status Display -->
                 <div class="mb-8 p-4 border border-amber-200 rounded-lg inline-block">
                     <p id="date-display" class="text-lg text-gray-600"></p>
                     <p id="status-display" class="text-lg font-bold mt-2"></p>
@@ -266,7 +250,6 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <footer class="bg-amber-900 text-white py-8">
             <div class="container mx-auto px-6 text-center">
                 <p>&copy; 2024 KRISHNA Restaurant. All Rights Reserved.</p>
@@ -278,6 +261,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            // Register the GSAP ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
 
             // --- Display Today's Date and Opening Status ---
             function showDateAndStatus() {
@@ -304,12 +290,12 @@
             showDateAndStatus();
 
 
-            // --- Randomly Place and Animate Food Images ---
+            // --- Randomly Place Food Images ---
             function placeRandomPorottas() {
                 const container = document.getElementById('porotta-container');
                 container.innerHTML = ''; // Clear existing images if any
                 const porottaCount = 8; // Total number of images
-                const foodNames = ['Porotta', 'Appam', 'Dosha']; // Array of food names to display
+                const foodNames = ['Porotta', 'Appam', 'Dosa']; // Array of food names to display
 
                 for (let i = 0; i < porottaCount; i++) {
                     const foodName = foodNames[i % foodNames.length]; 
@@ -331,14 +317,12 @@
                     porottaImg.style.top = `${Math.random() * 100}vh`;
 
                     const rotation = Math.random() * 360;
-                    const strength = Math.random() * 15 + 10; // Parallax strength from 10 to 25
-                    porottaImg.dataset.rotation = rotation;
-                    porottaImg.dataset.strength = strength;
+                    porottaImg.dataset.rotation = rotation; // Store initial rotation
                     porottaImg.style.transform = `rotate(${rotation}deg)`;
 
-                    if (i % 2 === 0) { // Left side
+                    if (i % 2 === 0) { // Place on Left side
                         porottaImg.style.left = `-${size * (0.5 + Math.random() * 0.3)}px`;
-                    } else { // Right side
+                    } else { // Place on Right side
                         porottaImg.style.right = `-${size * (0.5 + Math.random() * 0.3)}px`;
                     }
                     
@@ -347,33 +331,46 @@
             }
             placeRandomPorottas();
 
-            // --- Mouse Move Effects (Cursor Glow & 3D Parallax) ---
+            // Animate food items on scroll using GSAP
+            function animateFoodOnScroll() {
+                const foodItems = document.querySelectorAll('.random-porotta');
+                const menuSection = document.querySelector('#menu');
+
+                // A master timeline controlled by the scroll trigger
+                const masterTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: menuSection,
+                        start: "top bottom", // Animation starts when the menu top hits the viewport bottom
+                        end: "bottom top",   // Animation ends when the menu bottom leaves the viewport top
+                        scrub: 1.5,          // Makes the animation smoothly follow the scrollbar
+                    }
+                });
+
+                foodItems.forEach((item) => {
+                    const isLeft = item.style.left.includes('-');
+                    // Calculate how far to move the item horizontally
+                    const moveXDistance = window.innerWidth / 4 + Math.random() * 100;
+                    
+                    // Add an animation for this specific item to the master timeline
+                    masterTimeline.to(item, {
+                        x: isLeft ? moveXDistance : -moveXDistance, // Move right if on left, left if on right
+                        rotation: '+=270',  // Add a nice spin effect
+                        scale: 0.7,         // Shrink the item slightly
+                        opacity: 0.4,       // Make it a bit more transparent
+                        ease: "power1.inOut"
+                    }, 0); // The '0' means all animations start at the same time on the timeline
+                });
+            }
+            animateFoodOnScroll();
+
+
+            // --- Cursor Glow Effect ---
             const glow = document.getElementById('cursor-glow');
             document.addEventListener('mousemove', (e) => {
                 const { clientX, clientY } = e;
-                
                 // Update cursor glow position using CSS variables
                 glow.style.setProperty('--x', `${clientX}px`);
                 glow.style.setProperty('--y', `${clientY}px`);
-
-                // Calculate mouse position from -1 to 1 for parallax effect
-                const x = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-                const y = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-
-                const porottas = document.getElementsByClassName('random-porotta');
-                for (const porotta of porottas) {
-                    const strength = parseFloat(porotta.dataset.strength || 10);
-                    const rotation = parseFloat(porotta.dataset.rotation || 0);
-                    
-                    const moveX = -x * strength;
-                    const moveY = -y * strength;
-
-                    // Add 3D rotation for the tilt effect
-                    const tiltX = -y * (strength / 2.5);
-                    const tiltY = x * (strength / 2.5);
-
-                    porotta.style.transform = `translateX(${moveX}px) translateY(${moveY}px) rotateZ(${rotation}deg) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-                }
             });
 
 
@@ -427,7 +424,7 @@
             resizeCanvas();
             window.addEventListener('resize', () => {
                 resizeCanvas();
-                placeRandomPorottas();
+                placeRandomPorottas(); // Re-place items on resize
             });
 
             function addRipple(e) {
@@ -467,7 +464,7 @@
             }
             animate();
             
-            // **NEW**: Reveal on Scroll Animation using Intersection Observer
+            // --- Reveal on Scroll Animation using Intersection Observer ---
             const revealElements = document.querySelectorAll('.reveal-on-scroll');
 
             const observerOptions = {
