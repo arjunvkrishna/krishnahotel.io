@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRISHNA Restaurant - Thodupuzha</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Fonts: Noto Serif & Mukta -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Mukta:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- GSAP & ScrollTrigger for Advanced Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
@@ -31,9 +34,6 @@
             position: fixed;
             top: 0;
             left: 0;
-            /* **FIX**: The following two lines were removed to prevent distortion */
-            /* width: 100%; */
-            /* height: 100%; */
             z-index: 0; /* Behind all content */
             pointer-events: none; /* Allows clicking through the canvas */
         }
@@ -139,16 +139,22 @@
 </head>
 <body class="text-gray-800">
     
+    <!-- Cursor Glow Div -->
     <div id="cursor-glow"></div>
 
+    <!-- Water Ripple Effect Canvas -->
     <canvas id="ripple-canvas"></canvas>
 
+    <!-- Container for randomly placed food images. -->
     <div id="porotta-container"></div>
 
+    <!-- Main content container -->
     <div class="relative z-10">
 
+        <!-- Header & Navigation -->
         <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <!-- Each letter is wrapped in a span for individual animation -->
                 <a href="#home" class="brand-logo text-2xl font-bold font-serif text-amber-800">
                     <span class="letter">K</span><span class="letter">R</span><span class="letter">I</span><span class="letter">S</span><span class="letter">H</span><span class="letter">N</span><span class="letter">A</span>
                 </a>
@@ -161,28 +167,33 @@
                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                  </button>
             </div>
-              <div id="mobile-menu" class="hidden md:hidden bg-white/80 backdrop-blur-sm">
+              <!-- Mobile Menu -->
+             <div id="mobile-menu" class="hidden md:hidden bg-white/80 backdrop-blur-sm">
                  <a href="#home" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Home</a>
                  <a href="#menu" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Menu</a>
                  <a href="#contact" class="block py-2 px-6 text-gray-700 hover:bg-amber-100">Contact</a>
              </div>
         </header>
 
+        <!-- Home Section -->
         <section id="home" class="min-h-screen flex items-center justify-center text-center px-4">
             <div class="max-w-3xl">
                 <h1 class="text-5xl md:text-7xl font-bold font-serif text-amber-900 leading-tight">Authentic Kerala Cuisine</h1>
                 <p class="mt-4 text-lg md:text-xl text-gray-600">Experience the rich and diverse flavors of Kerala, prepared with love and tradition. Welcome to KRISHNA.</p>
                 
+                <!-- Wrapped button in a div for the animated border effect -->
                 <div class="mt-8 inline-block animated-gradient-button">
                      <a href="#menu" class="relative z-10 inline-block bg-amber-800 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-amber-900 transition-colors">Explore Our Menu</a>
                 </div>
             </div>
         </section>
 
+        <!-- Menu Section -->
         <section id="menu" class="py-20 bg-white/50 backdrop-blur-md">
             <div class="container mx-auto px-6">
                 <h2 class="text-4xl font-bold font-serif text-center mb-12 text-amber-900">Our Menu</h2>
                 
+                <!-- Menu Navigation -->
                 <div class="flex justify-center flex-wrap gap-4 mb-12">
                     <a href="#main-dishes" class="menu-nav-link bg-amber-100 text-amber-800 py-2 px-5 rounded-full hover:bg-amber-200 transition">Main Dishes</a>
                     <a href="#curries" class="menu-nav-link bg-amber-100 text-amber-800 py-2 px-5 rounded-full hover:bg-amber-200 transition">Curries</a>
@@ -191,6 +202,7 @@
                 </div>
 
                 <div class="max-w-4xl mx-auto">
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="main-dishes" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Main Dishes</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
@@ -202,6 +214,7 @@
                         </div>
                     </div>
 
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="curries" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Curries</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
@@ -211,6 +224,7 @@
                         </div>
                     </div>
 
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="snacks" class="mb-16 scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Snacks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
@@ -220,6 +234,7 @@
                         </div>
                     </div>
 
+                    <!-- Added 'reveal-on-scroll' class for the new animation -->
                     <div id="drinks" class="scroll-mt-24 reveal-on-scroll">
                         <h3 class="text-2xl font-bold font-serif mb-6 text-amber-800 border-b-2 border-amber-200 pb-2">Drinks</h3>
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-lg text-gray-700">
@@ -231,11 +246,13 @@
             </div>
         </section>
 
+        <!-- Contact Section -->
         <section id="contact" class="py-20">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-4xl font-bold font-serif text-center mb-8 text-amber-900">Get In Touch</h2>
                 <p class="text-xl text-gray-700 mb-4">We would love to welcome you!</p>
                 
+                <!-- Date & Status Display -->
                 <div class="mb-8 p-4 border border-amber-200 rounded-lg inline-block">
                     <p id="date-display" class="text-lg text-gray-600"></p>
                     <p id="status-display" class="text-lg font-bold mt-2"></p>
@@ -247,9 +264,16 @@
                     <p class="mt-4 font-semibold text-amber-800">Contact Number:</p>
                     <p>9562467123</p>
                 </div>
+
+                <!-- **NEW**: Google Maps Embed -->
+                <div class="mt-8 w-full max-w-3xl mx-auto rounded-lg overflow-hidden shadow-lg">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d988.3980270591861!2d76.69668614435314!3d9.88694166174725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b07c465d405622f%3A0x2323003bb35c03a3!2sHotel%20Krishna!5e0!3m2!1sen!2sin!4v1754233408631!5m2!1sen!2sin" class="w-full h-96" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
             </div>
         </section>
 
+        <!-- Footer -->
         <footer class="bg-amber-900 text-white py-8">
             <div class="container mx-auto px-6 text-center">
                 <p>&copy; 2024 KRISHNA Restaurant. All Rights Reserved.</p>
